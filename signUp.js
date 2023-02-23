@@ -1,5 +1,6 @@
 // Import the functions you need from the SDKs you need
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js";
+  import { getDatabase } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js";
   import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.17.1/firebase-analytics.js";
   // TODO: Add SDKs for Firebase products that you want to use
   // https://firebase.google.com/docs/web/setup#available-libraries
@@ -42,7 +43,6 @@ const createacct = document.getElementById("create-acct");
 const signupButton = document.getElementById("sign-up");
 const returnBtn = document.getElementById("return-btn");
 
-
 var email,
   password,
   signupEmail,
@@ -51,7 +51,6 @@ var email,
   confirmsignupPassword;
   
   createacctbtn.addEventListener("click", function (){
-    console.log("hello")
     var isVerified = true;
 
     signupEmail = signUpEmailIn.value;
@@ -60,12 +59,14 @@ var email,
         window.alert("Email input does not match");
         isVerified = false;
     }
+
     signupPassword = signUpPasswordIn.value;
     confirmsignupPassword = confirmsignupPasswordIn.value;
     if (signupPassword != confirmsignupPassword){
         window.alert("Password input does not match");
         isVerified = false;
     }
+
     if(
         signupEmail == null ||
         confirmSignupEmail == null ||
@@ -74,18 +75,25 @@ var email,
     ){
         window.alert("Please fill out all required fields");
     }
+
     if (isVerified){
         createUserWithEmailAndPassword(auth, signupEmail, signupPassword)
             .then((userCredentials) => {
+                //signed in
+                const user = userCredentials.user;
+                //...
                 window.alert("Successful, account created");
                 window.location ="./createTask.html";
             })
+            .catch((error) => {
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                //..
+                window.alert("Error occurred. Try again.");
+                window.alert(errorMessage);
+            });
     }
-  })
-
-
-
-
+  });
 
 submitButton.addEventListener("click", function(){
     email = emailInput.value;
@@ -93,6 +101,10 @@ submitButton.addEventListener("click", function(){
 
     signInWithEmailAndPassword(auth, email, password)
         .then((userCredentials) => {
+            //signed in
+            const user = userCredentials.user;
+
+            
             window.alert("Successful, welcome back");
             window.location = "./createTask.html";
         })
